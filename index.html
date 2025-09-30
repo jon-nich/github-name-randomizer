@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Name Randomizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🐙 GitHub Name Randomizer - 6 Teams 🐙</h1>
+        
+        <div class="input-section">
+            <label for="csvInput" class="csv-label">📂 Import CSV of Names:</label>
+            <input type="file" id="csvInput" accept=".csv" />
+        </div>
+        
+        <div class="input-section">
+            <label for="namesInput" class="csv-label">✍️ Paste Names (comma or line separated):</label><br>
+            <textarea id="namesInput" rows="4" cols="60" placeholder="one name per line, or comma-separated"></textarea>
+            <button id="applyNamesBtn" class="shuffle-btn" style="margin-top:6px;">Apply Names</button>
+        </div>
+        
+        <button class="shuffle-btn" onclick="shuffleGroups()">🔀 Shuffle Teams</button>
+        
+        <div class="groups-container" id="groupsContainer">
+            <!-- Teams will be generated here -->
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
