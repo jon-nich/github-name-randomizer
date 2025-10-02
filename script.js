@@ -32,6 +32,9 @@ let githubUsers = [
     "bgrins"
 ];
 
+// Number of groups (default 6, but user can change)
+let groupCount = 6;
+
 // This variable holds the current group state for drag and drop
 let currentGroups = [];
 
@@ -84,9 +87,28 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
+    // Group controls
+    document.getElementById("addGroupBtn").addEventListener("click", function() {
+        groupCount++;
+        updateTeamCountDisplay();
+        shuffleGroups();
+    });
+    document.getElementById("removeGroupBtn").addEventListener("click", function() {
+        if (groupCount > 1) {
+            groupCount--;
+            updateTeamCountDisplay();
+            shuffleGroups();
+        }
+    });
+
     // Initial shuffle and render
+    updateTeamCountDisplay();
     shuffleGroups();
 });
+
+function updateTeamCountDisplay() {
+    document.getElementById("teamCount").textContent = groupCount;
+}
 
 // Shuffle logic
 function shuffleArray(array) {
@@ -100,11 +122,10 @@ function shuffleArray(array) {
 
 function createGroups() {
     const shuffledUsers = shuffleArray(githubUsers);
-    const groups = [];
-    for (let i = 0; i < 5; i++) {
-        groups.push(shuffledUsers.slice(i * 5, (i + 1) * 5));
-    }
-    groups.push(shuffledUsers.slice(25));
+    const groups = Array.from({length: groupCount}, () => []);
+    shuffledUsers.forEach((user, i) => {
+        groups[i % groupCount].push(user);
+    });
     return groups;
 }
 
@@ -117,7 +138,9 @@ function renderGroups() {
             ondragover="event.preventDefault()" 
             ondrop="handleDrop(event, ${groupIndex})"
         >
-            <div class="group-title">Team ${groupIndex + 1}</div>
+            <div class="group-title">
+                Team ${groupIndex + 1}
+            </div>
             ${group.map((username, studentIndex) => `
                 <a 
                     class="student-card" 
