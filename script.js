@@ -53,23 +53,24 @@ function createGroups() {
     return groups;
 }
 
-// Render all groups as card columns in a 2x3 grid
+// Render all groups as card columns in a 2x3 grid (always 6 teams)
 function renderGroups() {
     const container = document.getElementById('groupsContainer');
     if (!currentGroups.length || !currentGroups.some(g => g.length > 0)) {
         container.innerHTML = "<p>No names loaded yet.</p>";
         return;
     }
+    // Always show first 6 teams in a 2x3 grid
     container.innerHTML = `<div class="groups-grid">${
-        currentGroups.map((group, groupIndex) => {
-            const color = getGroupColor(groupIndex, currentGroups.length);
+        currentGroups.slice(0, 6).map((group, groupIndex) => {
+            const color = getGroupColor(groupIndex, 6);
             return `
             <div class="group"
                 data-group-index="${groupIndex}" 
             >
                 <div class="group-color-bar" style="background:${color}"></div>
                 <div class="group-title">Team ${groupIndex + 1}</div>
-                ${group.map((username, studentIndex) => `
+                ${group.map((username) => `
                     <div class="student-card">${username}</div>
                 `).join('')}
             </div>
