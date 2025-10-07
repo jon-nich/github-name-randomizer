@@ -53,34 +53,24 @@ function createGroups() {
     return groups;
 }
 
-// Render all groups as card columns
+// Render all groups as card columns in a 2x3 grid
 function renderGroups() {
     const container = document.getElementById('groupsContainer');
-    if (!currentGroups.length || !currentGroups[0].length) {
+    if (!currentGroups.length || !currentGroups.some(g => g.length > 0)) {
         container.innerHTML = "<p>No names loaded yet.</p>";
         return;
     }
-    container.innerHTML = `<div class="groups-row">${
+    container.innerHTML = `<div class="groups-grid">${
         currentGroups.map((group, groupIndex) => {
             const color = getGroupColor(groupIndex, currentGroups.length);
             return `
             <div class="group"
                 data-group-index="${groupIndex}" 
-                ondragover="event.preventDefault()" 
-                ondrop="handleDrop(event, ${groupIndex})"
             >
                 <div class="group-color-bar" style="background:${color}"></div>
                 <div class="group-title">Team ${groupIndex + 1}</div>
                 ${group.map((username, studentIndex) => `
-                    <div 
-                        class="student-card" 
-                        draggable="true"
-                        data-group-index="${groupIndex}"
-                        data-student-index="${studentIndex}"
-                        ondragstart="handleDragStart(event, ${groupIndex}, ${studentIndex})"
-                    >
-                        ${username}
-                    </div>
+                    <div class="student-card">${username}</div>
                 `).join('')}
             </div>
             `;
@@ -99,26 +89,6 @@ function updateTeamCountDisplay() {
     const teamCountSpan = document.getElementById("teamCount");
     if (teamCountSpan) teamCountSpan.textContent = groupCount;
 }
-
-// Drag and drop handlers
-window.handleDragStart = function(event, groupIndex, studentIndex) {
-    event.dataTransfer.setData("text/plain", JSON.stringify({ groupIndex, studentIndex }));
-};
-window.handleDrop = function(event, destGroupIndex) {
-    event.preventDefault();
-    const data = event.dataTransfer.getData("text/plain");
-    if (!data) return;
-    const { groupIndex: srcGroupIndex, studentIndex: srcStudentIndex } = JSON.parse(data);
-
-    if (typeof srcGroupIndex !== "number" || typeof srcStudentIndex !== "number") return;
-    if (srcGroupIndex === destGroupIndex) return; // Don't drop onto same group
-
-    const username = currentGroups[srcGroupIndex][srcStudentIndex];
-    currentGroups[srcGroupIndex].splice(srcStudentIndex, 1);
-    currentGroups[destGroupIndex].push(username);
-
-    renderGroups();
-};
 
 // DOM loaded: attach events and show initial cards
 document.addEventListener("DOMContentLoaded", function() {

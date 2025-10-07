@@ -2,36 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Name Randomizer</title>
+    <title>GitHub Name Randomizer - 6 Teams</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🐙 GitHub Name Randomizer - <span id="teamCount">6</span> Teams 🐙</h1>
-        
-        <div class="input-section">
-            <label for="csvInput" class="csv-label">📂 Import CSV of Names:</label>
-            <input type="file" id="csvInput" accept=".csv" />
-        </div>
-        
-        <div class="input-section">
-            <label for="namesInput" class="csv-label">✍️ Paste Names (comma or line separated):</label><br>
-            <textarea id="namesInput" rows="4" cols="60" placeholder="one name per line, or comma-separated"></textarea>
-            <button id="applyNamesBtn" class="shuffle-btn" style="margin-top:6px;">Apply Names</button>
-        </div>
+    <h1>🐙 GitHub Name Randomizer - <span id="teamCount">6</span> Teams 🐙</h1>
 
-        <div class="group-controls" style="margin-bottom:12px;">
-            <button id="addGroupBtn" class="shuffle-btn">➕ Add Group</button>
-            <button id="removeGroupBtn" class="shuffle-btn">➖ Remove Group</button>
-        </div>
-        
-        <button class="shuffle-btn" onclick="shuffleGroups()">🔀 Shuffle Teams</button>
-        
-        <div class="groups-container" id="groupsContainer">
-            <!-- Teams will be generated here -->
-        </div>
+    <div>
+        <label>
+            <span>📁 Import CSV of Names:</span>
+            <input id="csvInput" type="file" accept=".csv,.txt">
+        </label>
     </div>
+
+    <div style="margin-top:8px;">
+        <label>
+            <span>📝 Paste Names (comma or line separated):</span>
+            <textarea id="namesInput" rows="3" cols="40" placeholder="one name per line, or comma-separated"></textarea>
+        </label>
+        <button id="applyNamesBtn">Apply Names</button>
+    </div>
+
+    <div style="margin-top:8px;">
+        <button id="addGroupBtn">+ Add Group</button>
+        <button id="removeGroupBtn">– Remove Group</button>
+    </div>
+    <div style="margin-top:8px;">
+        <button id="shuffleTeamsBtn">🔀 Shuffle Teams</button>
+    </div>
+
+    <div id="groupsContainer"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
