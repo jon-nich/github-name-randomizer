@@ -10,7 +10,7 @@ let githubUsers = [
 let groupCount = 6; // Default number of teams
 let currentGroups = [];
 
-// Helper to parse CSV or textarea input
+// Parse CSV or textarea
 function parseCSV(text) {
     let names = [];
     text = text.replace(/^\uFEFF/, '');
@@ -27,13 +27,13 @@ function parseCSV(text) {
     return [...new Set(names.filter(Boolean))];
 }
 
-// Generate a unique color for each group
+// Color for each group
 function getGroupColor(index, total) {
     const hue = (index * 360 / total) % 360;
     return `hsl(${hue}, 70%, 60%)`;
 }
 
-// Shuffle array with Fisher-Yates
+// Shuffle array
 function shuffleArray(array) {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -43,7 +43,7 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-// Create groups from list of users
+// Create groups
 function createGroups() {
     const shuffledUsers = shuffleArray(githubUsers);
     const groups = Array.from({length: groupCount}, () => []);
@@ -53,25 +53,34 @@ function createGroups() {
     return groups;
 }
 
-// Render all groups as card columns in a 2x3 grid (always 6 teams)
+// Render groups as cards with drag-and-drop
 function renderGroups() {
     const container = document.getElementById('groupsContainer');
     if (!currentGroups.length || !currentGroups.some(g => g.length > 0)) {
         container.innerHTML = "<p>No names loaded yet.</p>";
         return;
     }
-    // Always show first 6 teams in a 2x3 grid
-    container.innerHTML = `<div class="groups-grid">${
-        currentGroups.slice(0, 6).map((group, groupIndex) => {
-            const color = getGroupColor(groupIndex, 6);
+    container.innerHTML = `<div class="groups-row">${
+        currentGroups.map((group, groupIndex) => {
+            const color = getGroupColor(groupIndex, currentGroups.length);
             return `
             <div class="group"
                 data-group-index="${groupIndex}" 
+                ondragover="event.preventDefault()" 
+                ondrop="handleDrop(event, ${groupIndex})"
             >
                 <div class="group-color-bar" style="background:${color}"></div>
                 <div class="group-title">Team ${groupIndex + 1}</div>
-                ${group.map((username) => `
-                    <div class="student-card">${username}</div>
+                ${group.map((username, studentIndex) => `
+                    <div 
+                        class="student-card" 
+                        draggable="true"
+                        data-group-index="${groupIndex}"
+                        data-student-index="${studentIndex}"
+                        ondragstart="handleDragStart(event, ${groupIndex}, ${studentIndex})"
+                    >
+                        ${username}
+                    </div>
                 `).join('')}
             </div>
             `;
@@ -85,11 +94,31 @@ function shuffleGroups() {
     renderGroups();
 }
 
-// Team count display
+// Team count display (optional)
 function updateTeamCountDisplay() {
     const teamCountSpan = document.getElementById("teamCount");
     if (teamCountSpan) teamCountSpan.textContent = groupCount;
 }
+
+// Drag and drop handlers
+window.handleDragStart = function(event, groupIndex, studentIndex) {
+    event.dataTransfer.setData("text/plain", JSON.stringify({ groupIndex, studentIndex }));
+};
+window.handleDrop = function(event, destGroupIndex) {
+    event.preventDefault();
+    const data = event.dataTransfer.getData("text/plain");
+    if (!data) return;
+    const { groupIndex: srcGroupIndex, studentIndex: srcStudentIndex } = JSON.parse(data);
+
+    if (typeof srcGroupIndex !== "number" || typeof srcStudentIndex !== "number") return;
+    if (srcGroupIndex === destGroupIndex) return; // don't drop onto same group
+
+    const username = currentGroups[srcGroupIndex][srcStudentIndex];
+    currentGroups[srcGroupIndex].splice(srcStudentIndex, 1);
+    currentGroups[destGroupIndex].push(username);
+
+    renderGroups();
+};
 
 // DOM loaded: attach events and show initial cards
 document.addEventListener("DOMContentLoaded", function() {
@@ -158,5 +187,5 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     updateTeamCountDisplay();
-    shuffleGroups();
+    shuffleGroups(); // KEY: Show teams/cards as soon as page loads
 });
